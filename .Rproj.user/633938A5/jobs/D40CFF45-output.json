@@ -1,0 +1,3 @@
+[2,"\n"]
+[1,"pandoc \n  to: >-\n    commonmark+autolink_bare_uris+emoji+footnotes+gfm_auto_identifiers+pipe_tables+strikeout+task_lists+tex_math_dollars\n  output-file: README.md\n  standalone: true\n  default-image-extension: png\n  preserve-tabs: true\n  toc: true\n  toc-depth: 4\n  number-sections: true\n  \nmetadata\n  title: Mi flujo de trabajo para crear paquetes en R\n  author:\n    - name: Percy Soto-Becerra\n      url: 'https://github.com/psotob91'\n  date: last-modified\n  lang: en\n  preview-mode: raw\n  \n"]
+[1,"Output created: README.md\n\nWatching files for changes\nBrowse at http://localhost:4207/\n"]

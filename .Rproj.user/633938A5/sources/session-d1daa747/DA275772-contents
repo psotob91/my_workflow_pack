@@ -1,0 +1,167 @@
+---
+title: "Mi flujo de trabajo para crear paquetes en R"
+author: 
+  - name: Percy Soto-Becerra
+    url: https://github.com/psotob91
+date: last-modified
+lang: en
+format: 
+  gfm:     
+    preview-mode: raw
+    preserve-tabs: true
+    toc: true
+    toc-depth: 4
+    number-sections: true
+prefer-html: true
+execute: 
+  warning: false
+  message: false
+  error: false
+  echo: true
+---
+
+# Mi flujo de trabajo para crear paquetes
+
+Este repo contiene mi flujo de trabajo para crear paquetes en R, luego de haber revisado literatura, tutoriales y consultado algunos detalles a ChatGPT4. Este flujo será actualizado conforme aprenda más sobre desarrollar paquetes. 
+
+## Instalar Paquetes
+
+```r
+#install.packages(c("usethis", "devtools", "testthat", "here"))
+library(usethis)
+library(devtools)
+library(testthat)
+library(here)
+```
+
+## Paso 1: Crea una carpeta nueva para el paquete
+
+Crea un directorio para paquete. Lo mejor es usar la función de Rproject. La otra opción es usar la función `usethis::create_package()`. Sin embargo, esta opción implica que debas cambiar de directorio raíz y las cosas pueden ponerse algo complicadas.
+
+```r
+usethis::create_package("swper")
+```
+
+## Paso 2: Crea las funciones
+
+```r
+# Crear los scripts R
+usethis::use_r("swper_verify")
+usethis::use_r("swper_score")
+```
+
+Asegurate de crear las funciones.
+
+## Paso 3: Agrega las dependencias necesarias
+
+```r
+# Agregar las dependencias
+usethis::use_package("dplyr")
+usethis::use_package("tidyr")
+usethis::use_package("purrr")
+usethis::use_package("tibble")
+usethis::use_package("rlang")
+```
+
+Solo si se quiere permitir usar tidy_eval utils se puede hacer esto: 
+
+```r
+usethis::use_tidy_eval()
+```
+
+Ver más aquí [enlace](https://stackoverflow.com/questions/58026637/no-visible-global-function-definition-for)
+
+## Paso 4: Agrega los datos necesarios.
+
+```r
+# Agregar los datos
+usethis::use_data("example_data")
+```
+
+## Paso 5: Crea la plantilla de documentación
+
+```r
+# Agregar la plantilla de documentación
+usethis::use_roxygen_md("swper_verify")
+usethis::use_roxygen_md("swper_score")
+```
+
+Nos advierte que hay que correr `document()`:
+
+```r
+devtools::document()
+```
+
+```r
+devtools::document(roclets = c("rd", "collate", "namespace"))
+```
+
+Borramso el archivo NAMESPACE para que se vuelva a generar:
+
+```r
+unlink(NAMESPACE)
+```
+
+También podemos preguntar la version de los paquetes para poder usarlos en la documentacion:
+
+```r
+# obtener la versión de los paquetes instalados actualmente
+library(dplyr)
+
+pkg_info <- installed.packages() %>%
+  as_tibble() %>%
+  select(Package, Version)
+
+# obtener la versión de los paquetes cargados actualmente
+loaded_pkgs <- names(sessionInfo()$loadedOnly)
+
+# filtrar los paquetes cargados actualmente
+pkg_info2 <- pkg_info %>% 
+  filter(Package %in% loaded_pkgs)
+```
+
+```r
+# Todos los paquetes instalados
+pkg_info
+```
+
+```r
+# Todos los paquetes usados en la sesion
+pkg_info2
+```
+
+
+## Paso 6: Crea un archivo README
+
+```r
+# Agregar el README
+usethis::use_readme_md()
+```
+
+## Paso 7: Inicializa el control de versiones 
+
+```r
+# Inicializar el control de versiones
+usethis::use_git()
+```
+
+## Paso: Crea una licencia MIT
+
+```r
+usethis::use_mit_license()
+```
+
+## Paso 10: Verifica el paquete
+
+```r
+unlink("NAMESPACE")
+```
+
+```r
+devtools::document(roclets = c("rd", "collate", "namespace"))
+```
+
+```r
+devtools::check()
+```
+
